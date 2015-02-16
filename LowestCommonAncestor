@@ -1,0 +1,202 @@
+//	Given an array containing the root nodes of trees, find the lower common ancestor of any two nodes given.
+
+//		public class Node
+//		{
+//			public Node Left;
+//			public Node Right;
+//			public Node Parent;
+//		}
+//	Part1: Implement the method :public Node FindLowestCommonAncestorUsingNode(Node[] rootNodes, Node firstNode, Node secondNode);
+
+//		For the following trees :
+//	      a	    |   h
+//	     / \    |  / \
+//	    b   c   | i   k
+//	   / \   \  |
+//	  d   e  f  |
+//	 /      /   |
+//	z      g    |
+//
+//	For rootNodes[a, h], firstNode = b, secondNode = c = >  a
+//	For rootNodes[a, h], firstNode = a, secondNode = h = >  null
+//	For rootNodes[a, h], firstNode = f, secondNode = g = >  f
+//	For rootNodes[a, h], firstNode = z, secondNode = e = >  b
+//	For rootNodes[a, h], firstNode = e, secondNode = d = >  b
+//	For rootNodes[a, h], firstNode = d, secondNode = I = >  null
+
+//	Implement the method :	public Node FindLowestCommonUsingBinaryNode(BinaryNode[] rootNodes, BinaryNode node1, BinaryNode node2);
+
+//		This time implement it with the following node definition :
+
+//		public class BinaryNode
+//		{
+//			public Node Left;
+//			public Node Right;
+//		}
+
+#include<iostream>
+
+class Node {
+public:
+	Node* Left;
+	Node* Right;
+	Node* Parent;
+	int content;
+	int id;
+	Node(){
+		Left = nullptr;
+		Right = nullptr;
+		Parent = nullptr;
+		content = 0;
+		id = 0;
+	}
+};
+
+class Tree {
+public:
+	Node* root;
+	size_t size;
+	Tree(){
+		root = nullptr;
+		size = 0;
+	}
+	~Tree(){
+
+	}
+	bool insert(int content) {
+		return insert(content, this->root, nullptr);
+	}
+private:
+	bool insert(int content, Node*& current, Node* root);
+};
+
+Node* FindLowestCommonAncestorUsingNode(Node** rootNodes, Node* firstNode, Node* secondNode);
+Node* FindLowestCommonAncestorUsingNode(Node** rootNodes, Node* current1, Node* current2, int id1, int id2);
+char decode(int x);
+void test(Node** rootNodes, Node* firstNode, Node* secondNode);
+
+int main(){
+	Tree tree1;
+	int a = 20;		tree1.insert(a);
+	int b = 15;		tree1.insert(b);
+	int d = 14;		tree1.insert(d);
+	int z = 13;		tree1.insert(z);
+	int e = 18;		tree1.insert(e);
+	int c = 25;		tree1.insert(c);
+	int f = 30;		tree1.insert(f);
+	int g = 28;		tree1.insert(g);
+	Tree tree2;
+	int h = 23;		tree2.insert(h);
+	int i = 22;		tree2.insert(i);
+	int k = 24;		tree2.insert(k);
+	size_t n = 2;
+	Node** rootNodes = new Node*[n];
+	rootNodes[0] = tree1.root;
+	rootNodes[1] = tree2.root;
+	Node* firstNode;
+	Node* secondNode;
+
+	// Test case # 1
+	firstNode = rootNodes[0]->Left;
+	secondNode = rootNodes[0]->Right;
+	test(rootNodes, firstNode, secondNode);
+
+	// Test case # 2
+	firstNode = rootNodes[0];
+	secondNode = rootNodes[1];
+	test(rootNodes, firstNode, secondNode);
+
+	// Test case # 3
+	firstNode = rootNodes[0]->Right->Right;
+	secondNode = rootNodes[0]->Right->Right->Left;
+	test(rootNodes, firstNode, secondNode);
+
+	// Test case # 4
+	firstNode = rootNodes[0]->Left->Left->Left;
+	secondNode = rootNodes[0]->Left->Right;
+	test(rootNodes, firstNode, secondNode);
+
+	// Test case # 5
+	firstNode = rootNodes[0]->Left->Right;
+	secondNode = rootNodes[0]->Left->Left;
+	test(rootNodes, firstNode, secondNode);
+
+	// Test case # 6
+	firstNode = rootNodes[0]->Left->Left;
+	secondNode = rootNodes[1]->Left;
+	test(rootNodes, firstNode, secondNode);
+
+	system("pause");
+	return 0;
+}
+
+bool Tree::insert(int content, Node*& current, Node* root) {
+	Node* newElement = new Node;
+	newElement->content = content;
+
+	if (current == nullptr) {
+		current = newElement;
+		newElement->Parent = root;
+		size++;
+		return true;
+	}
+	if (content == current->content){
+		std::cout << "Content error.\n";
+		return false;
+	}
+
+	if (content > current->content)
+		insert(content, current->Right, current);
+
+	else
+		insert(content, current->Left, current);
+
+	return true;
+}
+
+Node* FindLowestCommonAncestorUsingNode(Node** rootNodes, Node* firstNode, Node* secondNode){
+	if (firstNode == nullptr || secondNode == nullptr || rootNodes == nullptr)
+		throw "No node.";
+	else {
+		int id1 = firstNode->content;
+		int id2 = secondNode->content;
+		return FindLowestCommonAncestorUsingNode(rootNodes, firstNode, secondNode, id1, id2);
+	}
+}
+
+Node* FindLowestCommonAncestorUsingNode(Node** rootNodes, Node* current1, Node* current2, int id1, int id2){
+
+	if (current1->id == id2) return current1;
+	if (current2->id == id1) return current2;
+	current1->id = id1;
+	current2->id = id2;
+	if (current1->Parent != nullptr)
+		return FindLowestCommonAncestorUsingNode(rootNodes, current1->Parent, current2, id1, id2);
+	if (current2->Parent != nullptr)
+		return FindLowestCommonAncestorUsingNode(rootNodes, current1, current2->Parent, id1, id2);	
+	return nullptr;
+}
+
+char decode(int x){
+	char xch;
+	if (x == 20) xch = 'a';
+	if (x == 15) xch = 'b';
+	if (x == 14) xch = 'd';
+	if (x == 13) xch = 'z';
+	if (x == 18) xch = 'e';
+	if (x == 25) xch = 'c';
+	if (x == 30) xch = 'f';
+	if (x == 28) xch = 'g';
+	if (x == 23) xch = 'h';
+	if (x == 22) xch = 'i';
+	if (x == 24) xch = 'k';
+	return xch;
+}
+
+void test(Node** rootNodes, Node* firstNode, Node* secondNode){
+	Node* x = FindLowestCommonAncestorUsingNode(rootNodes, firstNode, secondNode);
+	if (x == nullptr)
+		std::cout << "No Lowest Common Ancestor.\n";
+	else
+		std::cout << x->content << "\t" << decode(x->content) << "\n";
+}
