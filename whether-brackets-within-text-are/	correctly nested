@@ -1,0 +1,58 @@
+//	Implement function check(text) which checks whether brackets within text are 
+//	correctly nested. You need to concider brackets of three kinds: (), [], {}.
+
+//	Examples:
+
+//	check("a(b)") -> true		
+//	check("[{}]") -> true
+//	check("[(]") -> false
+//	check("}{") -> false
+//	check("z([{}-()]{a})") -> true
+//	check("") -> true
+
+#include<iostream>
+	bool Check( char* str )
+	{
+		int n = strlen( str );
+		if( n == 0 ) return true;
+		char* Stack = new char [ n + 1 ];
+		Stack[0]='\0';
+		int k;
+		for ( int i=0; i<n; i++ ) 
+		{
+			if( str[i] == '(' ) strcat( Stack, "(");
+			if( str[i] == '[' ) strcat( Stack, "[");
+			if( str[i] == '{' ) strcat( Stack, "{");
+			k = strlen( Stack );
+
+			if( str[i] == ')' ) 
+			{
+				if( k > 0 && Stack[ k-1 ] == '(' ) Stack[ k-1 ] = '\0';
+				else return false;
+			}
+			if( str[i] == ']' ) 
+			{
+				if( k > 0 && Stack[ k-1 ] == '[' ) Stack[ k-1 ] = '\0';
+				else return false;
+			}
+			if( str[i] == '}' ) 
+			{
+				if( k > 0 && Stack[ k-1 ] == '{' ) Stack[ k-1 ] = '\0';
+				else return false;
+			}
+		}
+		if( strlen( Stack ) == 0 ) return true;
+		else return false;
+	}
+int main()
+{
+	std::cout << Check("a(b)") << std::endl;		
+	std::cout << Check("[{}]") << std::endl;
+	std::cout << Check("[(]") << std::endl;
+	std::cout << Check("}{") << std::endl;
+	std::cout << Check("z([{}-()]{a})") << std::endl;
+	std::cout << Check("") << std::endl;
+
+	system("pause");
+	return 0;
+}
