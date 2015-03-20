@@ -1,0 +1,157 @@
+//	Создать класс для хранения календарных дат. 
+//	Обеспечить возможность работы с датами в различных форматах, изменения даты на заданное количество дней.
+//	Перегрузить операцию «–» для нахождения разности дат и операции сравнения. 
+//	Для класса определить оператор <<. 
+//	Стандартные функции и типы С для работы с датами не использовать.
+
+#include<iostream>
+using namespace std;
+class DATA
+{
+	int day;
+public:
+	DATA ()
+	{
+		day = 0;
+	}
+	DATA ( int d )
+	{
+		day = d;
+	}
+	DATA ( int d, int m, int y );
+	DATA operator += ( int g )
+	{
+		day = day + g;
+		return *this;
+	}
+	int operator - ( const DATA& ob )
+	{
+		return day - ob.day;
+	}
+	bool operator < ( const DATA& ob )
+	{
+		if( day < ob.day ) return true;
+		else return false;
+	}
+	bool operator == (const DATA& ob )
+	{
+		if( day == ob.day ) return true;
+		else return false;
+	}
+	friend ostream& operator << ( ostream& os, const DATA& P);
+};
+const bool getLeap ( int y )
+{	
+	return (y % 4 == 0    &&   y % 100 != 0   ||  y % 400 == 0) ? 1 : 0;			// определение високосного года: 1 - yes; 2 - no.
+}
+int getManthDay( int m, bool leap );
+const int getYear ( int& day );
+const int getMonth( int& day, bool leap );
+ostream& operator << ( ostream&os, const DATA&P);
+const char* getChMon ( int month );
+void main ()
+{
+	setlocale(LC_ALL,"rus");
+	DATA data ( 31 );
+	int g = -2;										// изменения даты на заданное количество дней
+	data +=  g ;
+	cout << data;
+	cout << "--------------------------" << "\n";
+	DATA data1 ( 2, 2, 0 );
+	DATA data2 ( 2, 2, 1 );
+	cout << data1 << "\n" << data2 << "\n" << data2 - data1 << "\n";
+	cout << "--------------------------" << "\n";
+	( data1 < data2 ) ? cout << "( data1 < data2 )true\n" : cout << "( data1 < data2 )false\n";
+	( data1 == data2 ) ? cout << "( data1 == data2 )true\n" : cout << "( data1 == data2 )false\n";
+}
+ostream& operator << ( ostream&os, const DATA&P)
+{
+	int year, month, day;
+	day = P.day;
+	year = getYear( day );
+
+	bool leap = getLeap( year );
+	month = getMonth( day, leap );
+	os << P.day << " дней от рождества Христова:\t\t" << day << "." << month << "." << year << "\t";
+	os << day << "/" << month << "/" << year << "\t";
+	os << day << " " << getChMon( month ) << " " << year << "\n";
+	return os;
+}
+const char* getChMon ( int month )
+{
+	switch ( month )
+	{
+	case 1:	return "January";
+	case 2:	return "February";
+	case 3:	return "March";
+	case 4:	return "April";
+	case 5:	return "May";
+	case 6:	return "June";
+	case 7:	return "July";
+	case 8:	return "August";
+	case 9:	return "September";
+	case 10:return "October";
+	case 11:return "November";
+	case 12:return "December";
+	default: return "ERROR";
+	}
+}
+const int getYear ( int& day )
+{
+	int y = 0;
+	for( ;; )
+	{
+		
+		int dy = ( getLeap( y ) == 0 ) ? 366 : 365;			
+		if( day > dy )
+		{
+			y++;		
+			day -= dy;
+		}
+		else break;
+	}
+	return y;
+}
+const int getMonth( int& day, bool leap )
+{
+	int m = 1, dm;
+	for ( ;; )
+	{
+		dm = getManthDay( m, leap );							// определение к-ва дней в месяце
+		if( day > dm )
+		{
+			m++;		
+			day -= dm;
+		}
+		else break;
+	}
+	return m;
+}
+DATA:: DATA ( int d, int m, int y )
+{
+	int dm, dy;
+	bool leap = getLeap( y );								// определение високосного года: 1 - yes; 2 - no.
+	day = d;
+	m--;
+	for( int i=m; i>0; i-- )
+	{
+		dm = getManthDay( m, leap );							// определение к-ва дней в месяце
+		day += dm;
+	}
+	for( int i=y-1; i>=0; i-- )
+	{
+		bool leap = getLeap( y );							// определение високосного года: 1 - yes; 2 - no.
+		if( leap == 1 ) dy = 365;
+		else dy = 366;
+		day += dy;
+	}
+}
+int getManthDay( int m, bool leap )
+{
+	int dm;
+		if(m < 8)				dm = (m%2 != 0) ? 31 : 30;		// кол-во дней в четных и нечетных месяцах
+		else					dm = (m%2 == 0) ? 31 : 30;	
+		if(m == 2 && leap == 0)	dm = 29;						// кол-во дней в феврале високосного года				
+		if(m == 2 && leap == 1)	dm = 28;						// кол-во дней в феврале невисокосного года	
+		return dm;
+}

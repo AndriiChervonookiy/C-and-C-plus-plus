@@ -1,0 +1,150 @@
+	Написать функцию, которая получает в качестве аргументов целое положительное число и систему счисления, 
+	в которую это число должно переводится (системы счисления от 2 до 36). 
+	Например, при переводе числа 27 в систему счисления 16 должно получиться 1B; 13 в 5-ю - 23; 35 в 18-ю - 1H. 
+
+# include<iostream>
+using namespace std;
+void ss (int a, int b);
+void main ()
+{
+	setlocale(LC_ALL,"RUS");
+	int a,b;
+	cout <<"\n\t Введите целое положительное число :   ";
+	cin >> a;
+	cout <<"\n\n\t Введите основание системы счисления :   ";
+	cin >> b;
+	ss(a, b);
+	cout << "\n\n\n";
+}
+void ss (int a, int b)
+{
+	const int n = 10;
+	char d[10];	
+	int c, i, j, k=a;
+	for (i=0; a>0; i++)
+	{
+		c = a % b;
+		a = a/b;
+		switch (c)
+		{
+		case 0:
+			d[i] = '0';
+			break;
+		case 1:
+			d[i] = '1';
+			break;
+		case 2:
+			d[i] = '2';
+			break;
+		case 3:
+			d[i] = '3';
+			break;
+		case 4:
+			d[i] = '4';
+			break;
+		case 5:
+			d[i] = '5';
+			break;
+		case 6:
+			d[i] = '6';
+			break;
+		case 7:
+			d[i] = '7';
+			break;
+		case 8:
+			d[i] = '8';
+			break;
+		case 9:
+			d[i] = '9';
+			break;
+		case 10:
+			d[i] = 'A';
+			break;
+		case 11:
+			d[i] = 'B';
+			break;
+		case 12:
+			d[i] = 'C';
+			break;
+		case 13:
+			d[i] = 'D';
+			break;
+		case 14:
+			d[i] = 'E';
+			break;
+		case 15:
+			d[i] = 'F';
+			break;
+		case 16:
+			d[i] = 'G';
+			break;
+		case 17:
+			d[i] = 'H';
+			break;
+		case 18:
+			d[i] = 'I';
+			break;
+		case 19:
+			d[i] = 'J';
+			break;
+		case 20:
+			d[i] = 'K';
+			break;
+		case 21:
+			d[i] = 'L';
+			break;
+		case 22:
+			d[i] = 'M';
+			break;
+		case 23:
+			d[i] = 'N';
+			break;
+		case 24:
+			d[i] = 'O';
+			break;
+		case 25:
+			d[i] = 'P';
+			break;
+		case 26:
+			d[i] = 'Q';
+			break;
+		case 27:
+			d[i] = 'R';
+			break;
+		case 28:
+			d[i] = 'S';
+			break;
+		case 29:
+			d[i] = 'T';
+			break;
+		case 30:
+			d[i] = 'U';
+			break;
+		case 31:
+			d[i] = 'V';
+			break;
+		case 32:
+			d[i] = 'W';
+			break;
+		case 33:
+			d[i] = 'X';
+			break;
+		case 34:
+			d[i] = 'Y';
+			break;
+		case 35:
+			d[i] = 'Z';
+			break;
+		default:
+			cout << "\n\t Ошибка ввода";
+			break;
+		}
+	}
+	system("cls");
+	cout << "\n\n\n\t Число "<< k <<" в "<< b <<"-ричной системе счисления = ";
+	for (j=i-1; j>=0; j--)
+	{
+		cout << d[j];
+	}	
+	return;
+}

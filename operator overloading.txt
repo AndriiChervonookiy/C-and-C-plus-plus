@@ -1,0 +1,198 @@
+//	25_1 ѕерегрузка оператора +-
+//
+//	—оздать класс дл€ работы с матрицами. 
+//	ѕредусмотреть, как минимум, функции дл€ 
+//		сложени€ матриц, 
+//		умножени€ матриц, 
+//		транспонировани€ матриц, 
+//		присваивани€ матриц друг другу, 
+//		установка и получение произвольного элемента матрицы. 
+//	Ќеобходимо перегрузить соответствующие операторы. 
+// http://www.mathprofi.ru/deistviya_s_matricami.html
+
+#include<iostream>
+using namespace std;
+class Matrix
+{
+	int** Mas;
+	int n;
+	int m;	
+	void CreatMemory( int n, int m );
+public:
+	Matrix ();
+	Matrix ( int n, int m );
+	Matrix ( const Matrix& ob );
+	~Matrix();
+	Matrix operator + ( const Matrix& ob );
+	Matrix operator = ( const Matrix& ob );
+	Matrix operator * ( const Matrix& ob );
+	Matrix Transpose();
+	void setElement( int i, int j, int x );
+	int getElement( int i, int j )const;
+	friend istream& operator >> ( istream& is, const Matrix& M );
+	friend ostream& operator << ( ostream& os, const Matrix& M );
+};
+istream& operator >> ( istream& is, const Matrix& M );
+ostream& operator << ( ostream& os, const Matrix& M );
+
+void main ()
+{
+	Matrix A;
+	cout << A;
+	Matrix B ( 3, 3 );
+	Matrix C ( 3, 3 );
+	Matrix D ( 3, 3 );
+	cout << A + C;
+	D = A + C ;
+	cout << A << C << D;
+	D = B * C;
+	cout << B << C << D;
+	Matrix E( 3, 3 ), ET( 3, 3 );
+	ET = E.Transpose();
+	cout << "\n" << E << ET;
+	D = ET;
+	cout << D;
+	D.setElement( 1, 1, 8888888 );
+	cout << D;
+	int z = D.getElement( 1, 1 );
+	cout << z;
+	Matrix F( 2, 2 );
+	cin >> F;
+	cout << F;
+}
+
+Matrix:: Matrix ()
+{
+	n = 3;
+	m = 3;
+	CreatMemory( n, m );
+	for( int i=0; i<n; i++ )
+		for( int j=0; j<m; j++ )
+			Mas[i][j] = 1;
+}
+Matrix:: Matrix ( int n, int m )
+{
+	this -> n = n;
+	this -> m = m;
+	CreatMemory( n, m );
+	for( int i=0; i<n; i++ )
+		for( int j=0; j<m; j++ )
+			Mas[i][j] = 10*i + j;
+}
+void Matrix:: CreatMemory( int n, int m )
+{
+	Mas = new int* [ n ];
+	for( int i=0; i<n; i++ )
+		Mas[ i ] = new int [ m ];
+}
+Matrix:: Matrix ( const Matrix& ob )
+{
+	n = ob.n;
+	m = ob.m;
+	CreatMemory( n, m );
+	for( int i=0; i<n; i++ )
+		for( int j=0; j<m; j++ )
+			Mas[i][j] = ob.Mas[i][j];
+}
+Matrix:: ~Matrix()
+{
+	for( int i=0; i<n; i++ )
+		delete [] Mas[ i ];
+	delete [] Mas;
+}
+istream& operator >> ( istream& is, const Matrix& M )
+{
+	for( int i=0; i<M.n; i++ )
+	{
+		for( int j=0; j<M.m; j++ )
+		{
+			cout << "\n Set Mas[" << i << "][" << j << "] :   ";
+			is >> M.Mas[i][j];
+		}
+	}
+	return is;
+}
+ostream& operator << ( ostream& os, const Matrix& M ) 
+{
+	for( int i=0; i<M.n; i++ )
+	{
+		for( int j=0; j<M.m; j++ )
+		{
+			os << M.Mas[i][j] << "\t";
+		}
+		os << "\n";
+	}
+	os << "n = " << M.n << "\t m = " << M.m << "\n------------------\n\n\n";
+	return os;
+}
+Matrix Matrix:: operator + ( const Matrix& ob )
+{
+	if( n != ob.n || m != ob.m )
+	{
+		cout << "These matrixes can't be added!" << "\n";
+		return *this;
+	}
+	Matrix temp( n, m );
+	temp.n = n;
+	temp.m = m;
+	for( int i=0; i<temp.n; i++ )
+		for( int j=0; j<temp.m; j++ )
+			temp.Mas[i][j] = Mas[i][j] + ob.Mas[i][j];
+	return temp;
+}
+Matrix Matrix:: operator = ( const Matrix & ob )
+{	
+	if( n != ob.n || m != ob.m )
+	{
+		cout << "This matrix can't be assigned!" << "\n";
+		return *this;
+	}
+	for( int i=0; i<n; i++ )
+		for( int j=0; j<m; j++ )
+			Mas[i][j] = ob.Mas[i][j];
+	return *this;
+}
+Matrix Matrix:: operator * ( const Matrix& ob )
+{
+	if( m != ob.n )
+	{
+		cout << "This matrix can't be multipled!" << "\n";
+		return *this;
+	}
+	Matrix temp( n, ob.m );
+	temp.n = n;
+	temp.m = ob.m;
+	for( int i=0; i<temp.n; i++ )
+	{
+		for( int j=0; j<temp.m; j++ )
+		{
+			temp.Mas[i][j] = 0;
+			for( int w=0; w<n; w++ )
+				temp.Mas[i][j] += ob.Mas[w][j] * Mas[i][w];
+		}
+	}
+	return temp;
+}
+
+Matrix Matrix:: Transpose()
+{
+	Matrix temp( m, n );
+	temp.n = m;
+	temp.m = n;
+	for( int i=0; i<temp.n; i++ )
+	{
+		for( int j=0; j<temp.m; j++ )
+		{
+			temp.Mas[i][j] = Mas[j][i];
+		}
+	}
+	return temp;
+}
+void Matrix:: setElement( int i, int j, int x )
+{
+	Mas[i][j] = x;
+}
+int Matrix:: getElement( int i, int j )const
+{
+	return Mas[i][j];
+}
